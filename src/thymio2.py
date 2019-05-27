@@ -65,7 +65,6 @@ class Thymio:
         self.hand_buffer = [None,None,None]
 
         self.obstacle = None
-        # self.obstacle_counter = 0
     
     def update_vel(self, linear, angular):
         """ Update velocity of mighty thymio"""
@@ -125,7 +124,6 @@ class Thymio:
         self.obstacle = np.sum(self.sensors_cache_values) != 0
 
         if self.obstacle:
-            # self.obstacle_counter = 1
             self.hand_buffer = [None, None, None]
             lin_err = np.sum(self.sensors_cache_values) / self.sensors_cache_values.shape[0]
             ang_err = np.sum(self.sensors_cache_values[:2] - self.sensors_cache_values[3:5]) +  (self.sensors_cache_values[5] - self.sensors_cache_values[6])
@@ -136,12 +134,6 @@ class Thymio:
             self.last_elapsed_sensors = self.time_elapsed
 
             self.update_vel(Params(x=-vel), Params(z=-ang_vel))
-
-        # elif not self.obstacle: #and self.obstacle_counter == 100:
-            # self.update_vel(Params(x=0), Params(z=0))
-            # self.obstacle_counter = 0
-        # elif self.obstacle_counter > 0 and self.obstacle_counter < 100:
-        #     self.obstacle_counter += 1
     
     def update_state(self, data):
         """A new Odometry message has arrived. See Odometry msg definition."""
@@ -176,17 +168,7 @@ class Thymio:
         np_arr = np.fromstring(data.data, dtype=np.uint8)
         image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
         image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
-        # image_np = cv2.flip(image_np,1)
 
-        # print(self.obstacle_counter)
-        # print(self.obstacle)
-
-        # if self.obstacle and not self.obstacle_counter == 0:
-        #     self.hand_buffer = [None, None, None]
-        #     cv2.imshow('Hand Detection',
-        #             cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR))
-        #     cv2.waitKey(1)
-        # else:
         self.draw_image(image_np, image_np.shape[1], image_np.shape[0], start_time)
 
     def draw_image(self, image_np, im_width, im_height, start_time):
@@ -201,18 +183,6 @@ class Thymio:
         ## (haven't tried) purpose to avoid go straight or move keep go
         vel = 0.0
         ang_vel = 0.0
-
-        ## (unused) This one to split the window into several windows
-        # num_width_window = 2
-        # roi_height = int(im_height / 1)
-        # roi_width = int(im_width / num_width_window)
-        # images = []
-        # img_mid_point = roi_width // 2
-        # for x in range(1):
-        #     for y in range(num_width_window):
-        #         tmp_image = image_np[x*roi_height:(x+1)*roi_height, y*roi_width:(y+1)*roi_width]
-        #         images.append(tmp_image)
-
         
         ## calculate the mid point
         mid_point = im_width // 2
@@ -220,10 +190,6 @@ class Thymio:
         ## create boxes and detect hand
         boxes, scores = detector_utils.detect_objects(image_np,
                                                       detection_graph, sess)
-
-        ## (unused) calculate the distance (not finished)
-        # focalLength = (boxes[1][0] * 11.0) / 24.0
-        # inches = 11.0 * focalLength / boxes[1][0]
 
         ## draw the box of the hand if it was detected
         hand_buffer, width_cur = detector_utils.draw_box_on_image(num_hands_detect, 0.15,
@@ -234,21 +200,10 @@ class Thymio:
         self.hand_buffer = hand_buffer
         ang_err = self.hand_buffer[2]
 
-        # cv2.putText(image_np, "confidence : " + str(scores[0]), (20, 50),
-        #         cv2.FONT_HERSHEY_SIMPLEX, 0.75, (77, 255, 9), 2)
-                
-        ## (log) Print size
         print("width_cur = " + str(width_cur))
-        # cv2.putText(image_np, "width_cur : " + str(width_cur), (20, 200),
-        #         cv2.FONT_HERSHEY_SIMPLEX, 0.75, (77, 255, 9), 2)
         
         ## if hand detected
         if ang_err is not None:
-            ## draw the angular error
-            # cv2.putText(image_np, "offset : " + str(ang_err), (20, 100),
-            #     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (77, 255, 9), 2)
-            # ang_vel = ang_err / 2000
-            ## angular error / position of the box is on the right or on the left -> rotate
             if ang_err < -70  or  ang_err > 70:
                 ang_vel = ang_err / im_width
                 vel = 0
@@ -257,13 +212,13 @@ class Thymio:
                 ang_vel = 0
                 ## size box / position of hand is to close with camera -> move back
                 if width_cur >= 170:
-                    vel = -0.05
+                    vel = -0.07
                 ## size box / position of hand is in mid range -> stop
                 elif width_cur > 150 and width_cur < 170:
                     vel = 0.00
                 ##(haven't tried) size box / position of hand is far from the camera go front
                 elif width_cur <= 150:
-                    vel = 0.05
+                    vel = 0.07
                 ## other case stay
                 # else:
                 #     vel = 0.00
@@ -275,47 +230,18 @@ class Thymio:
         else:
             ang_vel = 0
             vel = 0
-
-        ## (unused) counter add
-        # self.counter = self.counter + 1
-
-        #if self.counter % 5 == 0:
-        #ang_vel = self.angular_pid.step(ang_err, 0.1) / 5000
-        # cv2.putText(image_np, "ang_vel : " + str(ang_vel), (20, 150), 
-        #     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (77, 255, 9), 2)
-        # cv2.putText(image_np, "lin_vel : " + str(vel), (20, 230), 
-        #     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (77, 255, 9), 2)
         
         ## update velocity linear and angular 
         self.update_vel(Params(x=vel), Params(z=-ang_vel))
-        # self.move(Params(x=0.5), Params(z=-ang_vel))
 
         ## calculate fps
         num_frames += 1
         elapsed_time = (datetime.datetime.now() - start_time).total_seconds()
         fps = num_frames / elapsed_time
-
-        # print("frames processed: ", num_frames, "elapsed time: ",
-        #           elapsed_time, "fps: ", str(int(fps)))
         
         ## draw fps in window
-        # detector_utils.draw_fps_on_image("fps : " + str(int(fps)),
-        #                                          image_np)
-
-        ## (unused) split window shows and detect hand
-        # for y in range(num_width_window):
-        #     boxes, scores = detector_utils.detect_objects(images[y],
-        #                                               detection_graph, sess)
-        #     ang_err = detector_utils.draw_box_on_image(1,0.2,
-        #                                  scores, boxes, roi_width, roi_height,
-        #                                  images[y], img_mid_point)
-        #     cv2.imshow(str(y+1), cv2.cvtColor(images[y], cv2.COLOR_RGB2BGR))
-            
-            # ang_vel = self.angular_pid.step(ang_err, 0.1)
-            # vel = self.linear_pid.step(0.1, 0.1)
-
-            # self.update_vel(Params(x=-vel), Params(z=-ang_vel))
-
+        detector_utils.draw_fps_on_image("fps : " + str(int(fps)),
+                                                 image_np)
         ## show stream
         cv2.imshow('Hand Detection',
                     cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR))

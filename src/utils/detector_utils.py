@@ -64,28 +64,35 @@ def load_inference_graph():
 
 # draw the detected bounding boxes on the images
 # You can modify this to also draw a label.
-def draw_box_on_image(num_hands_detect, score_thresh, scores, boxes, im_width, im_height, image_np, img_mid_point, hand_buffer):
+def draw_box_on_image(num_hands_detect, score_thresh, scores, boxes, im_width, im_height, image_np, 
+                      img_mid_point, hand_buffer):
     err = None
-    # for i in range(num_hands_detect):
-    print(scores)
-    print(hand_buffer)
-    width_cur = 0
-    
+    width_cur = 0  
     i = 0
+
     if (scores[i] > score_thresh):
+        ## if greater than threshold
+
+        ## calculate the boxes 
         (left, right, top, bottom) = (boxes[i][1] * im_width, boxes[i][3] * im_width,
                                         boxes[i][0] * im_height, boxes[i][2] * im_height)
+        ## make the tuples of left top and right bottom
         p1 = (int(left), int(top))
         p2 = (int(right), int(bottom))
         
+        ## calculate the width of the boxes
         width_cur = abs(left - right)
+        ## get the mid point of boxes
         mid_cur = mid(p1, p2)
+        
+        
+        # if hand buffer is not None calculate the mid point of previous box
         if not None in hand_buffer:
             mid_buf = mid(hand_buffer[0], hand_buffer[1])
             width_buf = hand_buffer[1][0] - hand_buffer[0][0]
 
-        # check hand buffer and euclidean distance between current box with previous box
-        if None in hand_buffer or (euclidean(mid_cur, mid_buf) < 5 and abs(width_buf - width_cur) < 30):
+        # check hand buffer and euclidean distance between current box with previous box and the euclidean distan and size of width of the box
+        if None in hand_buffer or (euclidean(mid_cur, mid_buf) < 8.5 and abs(width_buf - width_cur) < 30):
             if not None in hand_buffer:
                 print('eu' + str(euclidean(mid_cur, mid_buf)))
 
@@ -96,13 +103,10 @@ def draw_box_on_image(num_hands_detect, score_thresh, scores, boxes, im_width, i
             hand_buffer[2] = err
         else:
             hand_buffer = [None, None, None]
-            # cv2.rectangle(image_np, hand_buffer[0], hand_buffer[1], (77, 255, 9), 3, 1)
-        
-        # size = np.abs(left - right)
-        # size = np.abs(left - right) * np.abs(top - bottom)
     else:
+        ## the score not pass the threshold
         hand_buffer = [None, None, None]
-    
+
     return hand_buffer, width_cur
 
 def euclidean(pt1, pt2):
