@@ -7,7 +7,8 @@ This project is the final project of our Robotics course 2019 in Università del
 What things you need to install the software and how to install them
 
 First we need to install ROS, you can follow this [link](http://wiki.ros.org/Installation/Ubuntu).
-Next we need to install and set up Mighty Thymio [link](https://github.com/jeguzzi/mighty-thymio/blob/master/Installation.md) and [link](https://github.com/jeguzzi/mighty-thymio/blob/master/USI2019.md)
+
+Next we need to install and set up Mighty Thymio you can follow both of this link: [link1](https://github.com/jeguzzi/mighty-thymio/blob/master/Installation.md)  [link2](https://github.com/jeguzzi/mighty-thymio/blob/master/USI2019.md)
 
 Then we need to change default tensorflow first to avoid error tensorflow
 ```
