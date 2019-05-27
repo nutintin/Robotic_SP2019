@@ -7,7 +7,7 @@ This project is the final project of our Robotics course 2019 in Università del
 What things you need to install the software and how to install them
 
 First we need to install ROS, you can follow this [link](http://wiki.ros.org/Installation/Ubuntu).
-And also installation
+Next we need to install and set up Mighty Thymio [link](https://github.com/jeguzzi/mighty-thymio/blob/master/Installation.md) and [link](https://github.com/jeguzzi/mighty-thymio/blob/master/USI2019.md)
 
 Then we need to change default tensorflow first to avoid error tensorflow
 ```
@@ -40,9 +40,13 @@ python2 main.py
 
 ## Acknowledgments
 
-* https://github.com/victordibia/handtracking - handtracking
-* https://github.com/jeguzzi/mighty-thymio - mighty thymio
-* https://github.com/FrancescoSaverioZuppichini/Robotics-Final-Project - object detection with mighty thymio
-* https://github.com/Mirko-Nava/Learning-Long-range-Perception - Learning Long-range Perception using Self-Supervision from Short-Range Sensors and Odometry
+* https://github.com/victordibia/handtracking - [handtracking](https://github.com/victordibia/handtracking)
+* https://github.com/jeguzzi/mighty-thymio - [mighty thymio](https://github.com/jeguzzi/mighty-thymio)
+* https://github.com/FrancescoSaverioZuppichini/Robotics-Final-Project - [object detection with mighty thymio](https://github.com/FrancescoSaverioZuppichini/Robotics-Final-Project )
+* https://github.com/Mirko-Nava/Learning-Long-range-Perception - [Learning Long-range Perception using Self-Supervision from Short-Range Sensors and Odometry](https://github.com/Mirko-Nava/Learning-Long-range-Perception)
+* https://arxiv.org/pdf/1512.02325.pdf - [SSD: Single Shot MultiBox Detector (paper)](https://arxiv.org/pdf/1512.02325.pdf )
 
+
+## Result and Video
+[Robotics SP 2019](https://www.youtube.com/watch?v=087OmK-mPvQ)
 
