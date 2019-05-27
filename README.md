@@ -41,7 +41,7 @@ python2 main.py
 
 ## Acknowledgments
 
-* https://github.com/victordibia/handtracking - handtracking
+* https://github.com/victordibia/handtracking - Victor Dibia, HandTrack: A Library For Prototyping Real-time Hand TrackingInterfaces using Convolutional Neural Networks
 * https://github.com/jeguzzi/mighty-thymio - mighty thymio
 * https://github.com/FrancescoSaverioZuppichini/Robotics-Final-Project - object detection with mighty thymio
 * https://github.com/Mirko-Nava/Learning-Long-range-Perception - Learning Long-range Perception using Self-Supervision from Short-Range Sensors and Odometry
